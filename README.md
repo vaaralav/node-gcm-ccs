@@ -29,8 +29,8 @@ gcm.send(to, data, [options, callback(error, messageId, to)]);
 Argument            | Details
 ------------------- | -------
 to                  | A single user
-data                | Data to be sent to the client
-options (optional)  | See _Message Paremeters_ from https://developer.android.com/google/gcm/server.html#send-msg. If `delivery_receipt_requested = true`, an event will be sent when the message is received by the target.
+payload             | Payload to be sent to the client. See _Payload_ from  https://developers.google.com/cloud-messaging/xmpp-server-ref#table1.
+options (optional)  | See _Options_ from https://developers.google.com/cloud-messaging/xmpp-server-ref#table1. If `delivery_receipt_requested = true`, an event will be sent when the message is received by the target.
 callback (optional) | `function(error, messageId, to)` called back individually for each target.
 
 End Connection
