@@ -27,6 +27,7 @@ module.exports = function GCMClient(projectId, apiKey) {
 			queued.push(json);
 		} else {
 			var message = new xmpp.Stanza.Element('message').c('gcm', { xmlns: 'google:mobile:data' }).t(JSON.stringify(json));
+      console.log(message);
 			client.send(message);
 		}
 	}
@@ -111,14 +112,18 @@ module.exports = function GCMClient(projectId, apiKey) {
 		}
 	});
 
-	function send(to, data, options, cb) {
+	function send(to, payload, options, cb) {
 		var messageId = crypto.randomBytes(8).toString('hex');
 
 		var outData = {
-			to: to,
-			message_id: messageId,
-			data: data
-		};
+      to: to,
+      message_id: messageId
+    };
+
+    Object.keys(payload).forEach(function(key) {
+      outData[key] = payload[key];
+    });
+
 		Object.keys(options).forEach(function(option) {
 			outData[option] = options[option];
 		});
