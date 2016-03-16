@@ -27,7 +27,7 @@ module.exports = function GCMClient(projectId, apiKey) {
 			queued.push(json);
 		} else {
 			var message = new xmpp.Stanza.Element('message').c('gcm', { xmlns: 'google:mobile:data' }).t(JSON.stringify(json));
-      console.log(message);
+			console.log(message);
 			client.send(message);
 		}
 	}
@@ -67,28 +67,28 @@ module.exports = function GCMClient(projectId, apiKey) {
 
 			switch (data.message_type) {
 				case 'control':
-					if (data.control_type === 'CONNECTION_DRAINING') {
-						draining = true;
-					}
-					break;
+				if (data.control_type === 'CONNECTION_DRAINING') {
+					draining = true;
+				}
+				break;
 
 				case 'nack':
-					if (data.message_id in acks) {
-						acks[data.message_id](data.error);
-						delete acks[data.message_id];
-					}
-					break;
+				if (data.message_id in acks) {
+					acks[data.message_id](data.error);
+					delete acks[data.message_id];
+				}
+				break;
 
 				case 'ack':
-					if (data.message_id in acks) {
-						acks[data.message_id](undefined, data.message_id, data.from);
-						delete acks[data.message_id];
-					}
-					break;
+				if (data.message_id in acks) {
+					acks[data.message_id](undefined, data.message_id, data.from);
+					delete acks[data.message_id];
+				}
+				break;
 
 				case 'receipt':
-					events.emit('receipt', data.message_id, data.from, data.category, data.data);
-					break;
+				events.emit('receipt', data.message_id, data.from, data.category, data.data);
+				break;
 
 				default:
 					// Send ack, as per spec
@@ -105,28 +105,30 @@ module.exports = function GCMClient(projectId, apiKey) {
 					}
 
 					break;
+				}
+			} else {
+				var message = stanza.getChildText('error').getChildText('text');
+				events.emit('message-error', message);
 			}
-		} else {
-			var message = stanza.getChildText('error').getChildText('text');
-			events.emit('message-error', message);
-		}
-	});
+		});
 
 	function send(to, payload, options, cb) {
 		var messageId = crypto.randomBytes(8).toString('hex');
 
 		var outData = {
-      to: to,
-      message_id: messageId
-    };
+			to: to,
+			message_id: messageId
+		};
 
-    Object.keys(payload).forEach(function(key) {
-      outData[key] = payload[key];
-    });
-
-		Object.keys(options).forEach(function(option) {
-			outData[option] = options[option];
+		Object.keys(payload).forEach(function(key) {
+			outData[key] = payload[key];
 		});
+
+    if(options) {
+		  Object.keys(options).forEach(function(option) {
+			 outData[option] = options[option];
+		  });
+    }
 
 		if (cb !== undefined) {
 			acks[messageId] = cb;
@@ -140,7 +142,7 @@ module.exports = function GCMClient(projectId, apiKey) {
 	}
 	function isReady(){
 
-	 return Object.keys(acks).length <=100;
+		return Object.keys(acks).length <=100;
 	}
 	events.end = end;
 	events.send = send;
