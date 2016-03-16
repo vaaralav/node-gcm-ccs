@@ -27,7 +27,6 @@ module.exports = function GCMClient(projectId, apiKey) {
 			queued.push(json);
 		} else {
 			var message = new xmpp.Stanza.Element('message').c('gcm', { xmlns: 'google:mobile:data' }).t(JSON.stringify(json));
-			console.log(message);
 			client.send(message);
 		}
 	}
